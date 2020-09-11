@@ -26,23 +26,34 @@ final class PlayerDetailsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+}
+
+// MARK: - Life cycle
+
+extension PlayerDetailsViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         initialSetup()
-        viewModel.playEpisode()
+        viewModel.playPauseEpisode()
     }
+
 }
 
 // MARK: - Setup
-extension PlayerDetailsViewController {
 
-    private func initialSetup() {
+private extension PlayerDetailsViewController {
+
+    func initialSetup() {
         view.backgroundColor = .white
         setupLayout()
         setupViews()
     }
 
-    fileprivate func setupViews() {
+    func setupViews() {
+        playerView.delegate = self
+        playerView.isPaused = viewModel.isPaused
         playerView.timeControlStackView.currentTimeLabel.text = viewModel.currentTime.toDisplayString()
 
         playerView.titleLabel.text = viewModel.episode.title
@@ -52,11 +63,31 @@ extension PlayerDetailsViewController {
         playerView.episodeImageView.setImage(from: url)
     }
 
-    private func setupLayout() {
+    func setupLayout() {
         view.addSubview(playerView)
         playerView.snp.makeConstraints { make in
             make.top.left.equalTo(self.view.safeAreaLayoutGuide).offset(24)
             make.bottom.right.equalTo(self.view.safeAreaLayoutGuide).offset(-24)
         }
     }
+
+}
+
+// MARK: - PlayerStackViewDelegate
+
+extension PlayerDetailsViewController: PlayerStackViewDelegate {
+
+    func playerStackViewRewindAction() {
+        viewModel.rewindEpisode()
+    }
+
+    func playerStackViewPlayPauseAction() {
+        viewModel.playPauseEpisode()
+        playerView.isPaused = viewModel.isPaused
+    }
+
+    func playerStackViewFastForwardAction() {
+        viewModel.fastForwardEpisode()
+    }
+
 }

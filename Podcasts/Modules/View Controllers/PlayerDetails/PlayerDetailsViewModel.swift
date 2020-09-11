@@ -22,8 +22,33 @@ final class PlayerDetailsViewModel {
         playerService.currentTime.isNaN ? 0 : playerService.currentTime
     }
 
-    func playEpisode() {
-        playerService.load(episode: episode)
-        playerService.play()
+    var isPaused: Bool {
+        playerService.playerState == .paused
     }
+
+    func playPauseEpisode() {
+        switch playerService.playerState {
+        case .initialization, .failed:
+            playerService.load(episode: episode)
+            playerService.play()
+
+        case .playing:
+            playerService.pause()
+
+        case .paused, .stopped, .loaded:
+            playerService.play()
+
+        case .buffering, .loading, .waitingForNetwork:
+            print(">>> \(#function) \(playerService.playerState)")
+        }
+    }
+
+    func rewindEpisode() {
+        playerService.rewind()
+    }
+
+    func fastForwardEpisode() {
+        playerService.fastForward()
+    }
+
 }

@@ -8,14 +8,28 @@
 
 import UIKit
 
+protocol PlayerStackViewDelegate: AnyObject {
+    func playerStackViewRewindAction()
+    func playerStackViewPlayPauseAction()
+    func playerStackViewFastForwardAction()
+}
+
 final class PlayerStackView: UIStackView {
 
+    weak var delegate: PlayerStackViewDelegate?
+
+    var isPaused: Bool = false {
+        didSet {
+            playingControlsStackView.isPaused = isPaused
+        }
+    }
+
     // MARK: - Properties
-    private lazy var closeButton = UIButton(type: .system)
     lazy var episodeImageView = UIImageView()
     lazy var timeControlStackView = TimeControlStackView()
     lazy var titleLabel = UILabel()
     lazy var authorLabel = UILabel()
+    private lazy var closeButton = UIButton(type: .system)
     private lazy var playingControlsStackView = PlayingControlsStackView()
     private lazy var volumeControlStackView = VolumeControlStackView()
 
@@ -23,6 +37,9 @@ final class PlayerStackView: UIStackView {
 
     // MARK: - Life cycle
     override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+
+        setupPlayingControlsStackView()
         setupEpisodeImageView()
         setupLabels()
         setupLayout()
@@ -43,23 +60,28 @@ final class PlayerStackView: UIStackView {
 }
 
 // MARK: - Setup
-extension PlayerStackView {
 
-    private func setupLayout() {
+private extension PlayerStackView {
+
+    func setupPlayingControlsStackView() {
+        playingControlsStackView.delegate = self
+    }
+
+    func setupLayout() {
         axis = .vertical
         spacing = 5
         let arrangedSubviews = [closeButton, episodeImageView, timeControlStackView, titleLabel, authorLabel, playingControlsStackView, volumeControlStackView]
         arrangedSubviews.forEach { self.addArrangedSubview($0) }
     }
 
-    private func setupEpisodeImageView() {
+    func setupEpisodeImageView() {
         episodeImageView.image = UIImage()
         episodeImageView.layer.cornerRadius = 5
         episodeImageView.clipsToBounds = true
         episodeImageView.snp.makeConstraints { $0.width.equalTo(episodeImageView.snp.height).multipliedBy(1 / 1) }
     }
 
-    fileprivate func setupLabels() {
+    func setupLabels() {
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
         titleLabel.snp.makeConstraints { $0.height.greaterThanOrEqualTo(20) }
@@ -69,4 +91,23 @@ extension PlayerStackView {
         authorLabel.textColor = AppConfig.tintColor
         authorLabel.snp.makeConstraints { $0.height.equalTo(20) }
     }
+
+}
+
+// MARK: - PlayingControlsStackViewDelegate
+
+extension PlayerStackView: PlayingControlsStackViewDelegate {
+
+    func playingControlsStackViewRewindAction() {
+        delegate?.playerStackViewRewindAction()
+    }
+
+    func playingControlsStackViewPlayPauseAction() {
+        delegate?.playerStackViewPlayPauseAction()
+    }
+
+    func playingControlsStackViewFastForwardAction() {
+        delegate?.playerStackViewFastForwardAction()
+    }
+
 }
