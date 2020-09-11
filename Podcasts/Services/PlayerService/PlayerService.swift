@@ -6,10 +6,28 @@
 //  Copyright © 2019 Eugene Karambirov. All rights reserved.
 //
 
+import AVFoundation
 import Foundation
+import MediaPlayer
 import ModernAVPlayer
 
+protocol PlayerServiceDelegate: AnyObject {
+    func playerServiceSetVolume(_ value: Float)
+}
+
 final class PlayerService {
+
+    weak var delegate: PlayerServiceDelegate?
+
+    var observeValue: NSKeyValueObservation?
+
+    init() {
+        startObservingVolumeChanges()
+    }
+
+    deinit {
+        stopObservingVolumeChanges()
+    }
 
     var playerState: ModernAVPlayer.State {
         player.state
@@ -17,6 +35,10 @@ final class PlayerService {
 
     var currentTime: Double {
         player.currentTime
+    }
+
+    var volumeValue: Float {
+        AVAudioSession.sharedInstance().outputVolume
     }
 
     private var metadata: ModernAVPlayerMediaMetadata?
@@ -51,18 +73,39 @@ final class PlayerService {
     }
 
     func rewind() {
-        player.seek(position: -15)
+        player.seek(position: currentTime - 15)
     }
 
     func fastForward() {
-        player.seek(position: 15)
+        player.seek(position: currentTime + 15)
     }
 
     func seek(to position: Double) {
         player.seek(position: position)
     }
 
-//    func changeVolume(value: Double) {
-//
-//    }
+    func changeVolume(_ value: Float) {
+        MPVolumeView.setVolume(value)
+    }
+
+}
+
+// MAKR: - Setup
+
+private extension PlayerService {
+
+    func startObservingVolumeChanges() {
+        let audioSession = AVAudioSession.sharedInstance()
+        observeValue = audioSession.observe(\.outputVolume, options: [.initial, .new]) { _, value in
+            if let newValue = value.newValue {
+                self.delegate?.playerServiceSetVolume(newValue)
+            }
+        }
+    }
+
+    func stopObservingVolumeChanges() {
+        observeValue?.invalidate()
+        observeValue = nil
+    }
+
 }

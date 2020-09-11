@@ -12,6 +12,7 @@ protocol PlayerStackViewDelegate: AnyObject {
     func playerStackViewRewindAction()
     func playerStackViewPlayPauseAction()
     func playerStackViewFastForwardAction()
+    func playerStackViewChangeVolume(_ value: Float)
 }
 
 final class PlayerStackView: UIStackView {
@@ -39,6 +40,7 @@ final class PlayerStackView: UIStackView {
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
+        setupVolumeControlStackView()
         setupPlayingControlsStackView()
         setupEpisodeImageView()
         setupLabels()
@@ -57,11 +59,19 @@ final class PlayerStackView: UIStackView {
         })
     }
 
+    func setVolume(_ value: Float) {
+        volumeControlStackView.setVolume(value, animated: true)
+    }
+
 }
 
 // MARK: - Setup
 
 private extension PlayerStackView {
+
+    func setupVolumeControlStackView() {
+        volumeControlStackView.delegate = self
+    }
 
     func setupPlayingControlsStackView() {
         playingControlsStackView.delegate = self
@@ -108,6 +118,16 @@ extension PlayerStackView: PlayingControlsStackViewDelegate {
 
     func playingControlsStackViewFastForwardAction() {
         delegate?.playerStackViewFastForwardAction()
+    }
+
+}
+
+// MARK: - VolumeControlStackViewDelegate
+
+extension PlayerStackView: VolumeControlStackViewDelegate {
+
+    func volumeControlStackViewChangeVolume(_ value: Float) {
+        delegate?.playerStackViewChangeVolume(value)
     }
 
 }

@@ -9,7 +9,13 @@
 import SnapKit
 import UIKit
 
+protocol VolumeControlStackViewDelegate: AnyObject {
+    func volumeControlStackViewChangeVolume(_ value: Float)
+}
+
 final class VolumeControlStackView: UIStackView {
+
+    weak var delegate: VolumeControlStackViewDelegate?
 
     // MARK: - Properties
     private lazy var currentVolumeSlider = UISlider()
@@ -18,22 +24,53 @@ final class VolumeControlStackView: UIStackView {
 
     // MARK: - Life cycle
     override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+
+        setupVolumeSlider()
         setupImageViews()
         setupLayout()
     }
+
 }
 
 // MARK: - Setup
-extension VolumeControlStackView {
 
-    private func setupLayout() {
+private extension VolumeControlStackView {
+
+    func setupLayout() {
         addArrangedSubview(mutedVolumeImageView)
         addArrangedSubview(currentVolumeSlider)
         addArrangedSubview(maxVolumeImageView)
     }
 
-    private func setupImageViews() {
+    func setupImageViews() {
         mutedVolumeImageView.image = UIImage(systemSymbol: .speakerFill)
         maxVolumeImageView.image = UIImage(systemSymbol: .speaker3Fill)
     }
+
+    func setupVolumeSlider() {
+        currentVolumeSlider.addTarget(self, action: #selector(changeVolume(_:)), for: .valueChanged)
+    }
+
+}
+
+// MARK: - Public actions
+
+extension VolumeControlStackView {
+
+    func setVolume(_ value: Float, animated: Bool = true) {
+        currentVolumeSlider.setValue(value, animated: animated)
+    }
+
+}
+
+// MARK: - Private actions
+
+private extension VolumeControlStackView {
+
+    @objc
+    func changeVolume(_ sender: UISlider) {
+        delegate?.volumeControlStackViewChangeVolume(sender.value)
+    }
+
 }

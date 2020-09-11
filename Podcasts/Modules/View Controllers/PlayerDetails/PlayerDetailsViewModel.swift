@@ -8,7 +8,13 @@
 
 import Foundation
 
+protocol PlayerDetailsViewModelDelegate: AnyObject {
+    func playerDetailsViewModelSetVolume(_ value: Float)
+}
+
 final class PlayerDetailsViewModel {
+
+    weak var delegate: PlayerDetailsViewModelDelegate?
 
     let episode: Episode
     private let playerService: PlayerService
@@ -16,6 +22,7 @@ final class PlayerDetailsViewModel {
     init(episode: Episode, playerService: PlayerService) {
         self.episode = episode
         self.playerService = playerService
+        self.playerService.delegate = self
     }
 
     var currentTime: Double {
@@ -24,6 +31,10 @@ final class PlayerDetailsViewModel {
 
     var isPaused: Bool {
         playerService.playerState == .paused
+    }
+
+    var volumeValue: Float {
+        playerService.volumeValue
     }
 
     func playPauseEpisode() {
@@ -49,6 +60,20 @@ final class PlayerDetailsViewModel {
 
     func fastForwardEpisode() {
         playerService.fastForward()
+    }
+
+    func changeVolume(_ value: Float) {
+        playerService.changeVolume(value)
+    }
+
+}
+
+// MARK: - PlayerServiceDelegate
+
+extension PlayerDetailsViewModel: PlayerServiceDelegate {
+
+    func playerServiceSetVolume(_ value: Float) {
+        delegate?.playerDetailsViewModelSetVolume(value)
     }
 
 }

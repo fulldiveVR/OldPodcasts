@@ -54,4 +54,5 @@ extension PodcastsSearchViewModel {
         self.podcasts = podcasts
         dataSource = .make(for: podcasts)
     }
+
 }

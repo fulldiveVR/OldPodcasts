@@ -19,6 +19,7 @@ final class PlayerDetailsViewController: UIViewController {
     init(viewModel: PlayerDetailsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.viewModel.delegate = self
     }
 
     @available(*, unavailable)
@@ -55,6 +56,7 @@ private extension PlayerDetailsViewController {
         playerView.delegate = self
         playerView.isPaused = viewModel.isPaused
         playerView.timeControlStackView.currentTimeLabel.text = viewModel.currentTime.toDisplayString()
+        playerView.setVolume(viewModel.volumeValue)
 
         playerView.titleLabel.text = viewModel.episode.title
         playerView.authorLabel.text = viewModel.episode.author
@@ -88,6 +90,20 @@ extension PlayerDetailsViewController: PlayerStackViewDelegate {
 
     func playerStackViewFastForwardAction() {
         viewModel.fastForwardEpisode()
+    }
+
+    func playerStackViewChangeVolume(_ value: Float) {
+        viewModel.changeVolume(value)
+    }
+
+}
+
+// MARK: - PlayerDetailsViewModelDelegate
+
+extension PlayerDetailsViewController: PlayerDetailsViewModelDelegate {
+
+    func playerDetailsViewModelSetVolume(_ value: Float) {
+        playerView.setVolume(value)
     }
 
 }
