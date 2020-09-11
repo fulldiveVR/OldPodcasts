@@ -10,8 +10,8 @@ import Foundation
 
 final class FavoritesViewModel {
 
-    private let podcastsService: PodcastsService
-    private let playerService: PlayerService
+    let podcastsService: PodcastsService
+    let playerService: PlayerService
 
     private(set) lazy var podcasts = podcastsService.savedPodcasts
     private(set) var dataSource: CollectionViewDataSource<Podcast, FavoritePodcastCell>?

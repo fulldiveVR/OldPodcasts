@@ -38,7 +38,11 @@ struct TabBarAssembly: AssemblyProtocol {
 private extension TabBarAssembly {
 
     func makePodcastsSearchModule(dependencies: Dependencies, parameters: Parameters) -> UIViewController {
-        let podcastsSearchViewModel = PodcastsSearchViewModel(networkingService: ServiceLocator.networkingService)
+        let podcastsSearchViewModel = PodcastsSearchViewModel(
+            podcastsService: ServiceLocator.podcastsService,
+            playerService: ServiceLocator.playerService,
+            networkingService: ServiceLocator.networkingService
+        )
         let podcastsSearchViewController = PodcastsSearchViewController(viewModel: podcastsSearchViewModel)
         let controller = makeNavigationController(
             for: podcastsSearchViewController,

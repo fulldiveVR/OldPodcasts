@@ -10,14 +10,24 @@ import UIKit
 
 final class PodcastsSearchViewModel {
 
+    let podcastsService: PodcastsService
+    let playerService: PlayerService
+
     private let networkingService: NetworkingService
     private var timer: Timer?
     private(set) var dataSource: TableViewDataSource<Podcast, PodcastCell>?
     private(set) var podcasts = [Podcast]()
 
-    init(networkingService: NetworkingService = NetworkingService()) {
+    init(
+        podcastsService: PodcastsService,
+        playerService: PlayerService,
+        networkingService: NetworkingService = NetworkingService()
+    ) {
+        self.podcastsService = podcastsService
+        self.playerService = playerService
         self.networkingService = networkingService
     }
+
 }
 
 extension PodcastsSearchViewModel {

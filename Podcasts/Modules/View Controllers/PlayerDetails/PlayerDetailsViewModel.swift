@@ -19,7 +19,7 @@ final class PlayerDetailsViewModel {
     }
 
     var currentTime: Double {
-        playerService.currentTime
+        playerService.currentTime.isNaN ? 0 : playerService.currentTime
     }
 
     func playEpisode() {

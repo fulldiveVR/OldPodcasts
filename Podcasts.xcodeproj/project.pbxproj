@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		097B673E2507545C003F80EA /* MainTabBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097B673D2507545C003F80EA /* MainTabBarViewModel.swift */; };
 		512B307E24D49E6D0020B441 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 512B307D24D49E6D0020B441 /* SFSafeSymbols */; };
 		512B308024D4A1A20020B441 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512B307F24D4A1A20020B441 /* AppConfig.swift */; };
 		51B8294D24D1E1CE00F08332 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 51B8294C24D1E1CE00F08332 /* Moya */; };
@@ -78,6 +79,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		097B673D2507545C003F80EA /* MainTabBarViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModel.swift; sourceTree = "<group>"; };
 		512B307F24D4A1A20020B441 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		AA28B60E222590320090B0A8 /* DownloadsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewModel.swift; sourceTree = "<group>"; };
 		AA341C01223FFB6500931C36 /* PlayerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStackView.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 			isa = PBXGroup;
 			children = (
 				AA62F5F62154C95900356E3F /* MainTabBarController.swift */,
+				097B673D2507545C003F80EA /* MainTabBarViewModel.swift */,
 				AADD0D8C24D57EA100D385A4 /* TabBarAssembly.swift */,
 				AADD0D8E24D57EBE00D385A4 /* TabBarViewModel.swift */,
 				AADD0D9024D57ECC00D385A4 /* TabBarViewController.swift */,
@@ -676,6 +679,7 @@
 				AA7CDA68221FF3F400838F13 /* Describable.swift in Sources */,
 				AA62F62C215B5C5D00356E3F /* RSSFeed+Extensions.swift in Sources */,
 				AABC9416225A41C50034FEA2 /* PlayerDetailsViewController.swift in Sources */,
+				097B673E2507545C003F80EA /* MainTabBarViewModel.swift in Sources */,
 				AA7CDA78222066F500838F13 /* CollectionViewDataSource.swift in Sources */,
 				AA62F62E215B608400356E3F /* UserDefaults+Extensions.swift in Sources */,
 				AADD0D9324D57F9000D385A4 /* AssemblyProtocol.swift in Sources */,

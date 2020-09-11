@@ -25,8 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.rootViewController = MainTabBarController(
             viewModel: MainTabBarViewModel(
-                items: [.search, .favorites, .downloads],
-                playerService: ServiceLocator.playerService
+                items: [.search, .favorites, .downloads]
             )
         )
         window?.tintColor = AppConfig.tintColor

@@ -11,9 +11,11 @@ import Foundation
 final class EpisodesViewModel {
 
     let podcast: Podcast
+    let playerService: PlayerService
+
     private let networkingService = NetworkingService()
     private let podcastsService: PodcastsService
-    private let playerService: PlayerService
+
     private(set) var episodes = [Episode]()
     private(set) var dataSource: TableViewDataSource<Episode, EpisodeCell>?
 
@@ -27,7 +29,7 @@ final class EpisodesViewModel {
 extension EpisodesViewModel {
 
     func fetchEpisodes(_ completion: @escaping () -> Void) {
-        networkingService.fetchEpisodes(feedUrlSting: podcast.feedUrlSting) { [weak self] episodes in
+        networkingService.fetchEpisodes(feedUrlSting: podcast.feedUrl) { [weak self] episodes in
             self?.episodesDidLoad(episodes)
             completion()
         }

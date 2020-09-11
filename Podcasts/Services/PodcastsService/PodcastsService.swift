@@ -76,7 +76,7 @@ extension PodcastsService {
 
     private func fetchDownloadedEpisodes() -> [Episode] {
         guard
-            let episodesData = UserDefaults.value(forKey: UserDefaults.downloadedEpisodesKey) as? Data
+            let episodesData = UserDefaults.standard.value(forKey: UserDefaults.downloadedEpisodesKey) as? Data
         else { return [] }
 
         do {

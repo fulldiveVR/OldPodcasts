@@ -76,7 +76,7 @@ extension EpisodesViewController {
 //        let mainTabBarController = UIApplication.mainTabBarController
 //        mainTabBarController?.maximizePlayerDetails(for: episode,playlistEpisodes: viewModel.episodes)
 
-        let viewModel = PlayerDetailsViewModel(episode: episode, playerService: viewModel.playerService)
+        let viewModel = PlayerDetailsViewModel(episode: episode, playerService: self.viewModel.playerService)
         let playerViewController = PlayerDetailsViewController(viewModel: viewModel)
         present(playerViewController, animated: true)
     }
