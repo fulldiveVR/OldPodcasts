@@ -44,7 +44,6 @@ final class PodcastsSearchViewController: UITableViewController {
 private extension PodcastsSearchViewController {
 
     func searchPodcasts(with searchText: String) {
-        guard searchText.count > 2 else { return }
         viewModel.searchPodcasts(with: searchText) { [weak self] in
             self?.tableView.dataSource = self?.viewModel.dataSource
             self?.tableView.reloadData()
