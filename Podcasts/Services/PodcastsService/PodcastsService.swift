@@ -23,11 +23,18 @@ final class PodcastsService {
 // MARK: - Methods
 extension PodcastsService {
 
+    func savePodcast(_ podcast: Podcast) {
+        var podcasts = savedPodcasts
+        podcasts.append(podcast)
+        guard
+            let data = try? NSKeyedArchiver.archivedData(withRootObject: podcasts, requiringSecureCoding: false)
+        else { return }
+        UserDefaults.standard.set(data, forKey: UserDefaults.favoritedPodcastKey)
+    }
+
     func deletePodcast(_ podcast: Podcast) {
         let podcasts = savedPodcasts
-        let filteredPodcasts = podcasts.filter { podcast -> Bool in
-            podcast.trackName != podcast.trackName && podcast.artistName != podcast.artistName
-        }
+        let filteredPodcasts = podcasts.filter { $0.feedUrl != podcast.feedUrl }
 
         guard
             let data = try? NSKeyedArchiver.archivedData(withRootObject: filteredPodcasts, requiringSecureCoding: false)
@@ -48,9 +55,7 @@ extension PodcastsService {
 
     func deleteEpisode(_ episode: Episode) {
         let savedEpisodes = downloadedEpisodes
-        let filteredEpisodes = savedEpisodes.filter { filteredEpisode -> Bool in
-            filteredEpisode.title != episode.title
-        }
+        let filteredEpisodes = savedEpisodes.filter { $0.streamUrl != episode.streamUrl }
 
         do {
             let data = try JSONEncoder().encode(filteredEpisodes)
@@ -68,7 +73,7 @@ extension PodcastsService {
     private func fetchSavedPodcasts() -> [Podcast] {
         guard
             let savedData = UserDefaults.standard.data(forKey: UserDefaults.favoritedPodcastKey),
-            let savedPodcasts = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [Podcast.self], from: savedData) as? [Podcast]
+            let savedPodcasts = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedData) as? [Podcast]
         else { return [] }
 
         return savedPodcasts

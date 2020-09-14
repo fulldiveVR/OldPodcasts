@@ -26,6 +26,7 @@ final class FavoritesViewModel {
 extension FavoritesViewModel {
 
     func fetchFavorites(_ completion: @escaping () -> Void) {
+        podcasts = podcastsService.savedPodcasts
         podcastsDidLoad(podcasts)
         completion()
     }

@@ -41,6 +41,10 @@ extension PodcastsSearchViewModel {
         }
     }
 
+    func topPodcasts(completion: @escaping () -> Void) {
+
+    }
+
     func deleteLoadedPodcasts() {
         podcasts.removeAll()
         dataSource = .make(for: podcasts)

@@ -104,24 +104,32 @@ extension EpisodesViewController {
         tableView.tableFooterView = UIView()
     }
 
+    func setupFavoritedButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemSymbol: .heartFill),
+            style: .plain,
+            target: self,
+            action: #selector(deleteFavorite)
+        )
+    }
+
+    func setupNoFavoritedButton() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemSymbol: .heart),
+            style: .plain,
+            target: self,
+            action: #selector(saveFavorite)
+        )
+    }
+
     // TODO: There's no way to unfavorite. Add deleteFavorite() and refactor below logic
     private func setupNavigationBarButtons() {
         let hasFavorited = viewModel.checkIfPodcastHasFavorited()
 
         if hasFavorited {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                image: UIImage(systemSymbol: .heartFill),
-                style: .plain,
-                target: nil,
-                action: nil
-            )
+            setupFavoritedButton()
         } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                image: UIImage(systemSymbol: .heart),
-                style: .plain,
-                target: self,
-                action: #selector(saveFavorite)
-            )
+            setupNoFavoritedButton()
         }
     }
 
@@ -129,12 +137,13 @@ extension EpisodesViewController {
     private func saveFavorite() {
         viewModel.saveFavorite()
         showBadgeHighlight()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemSymbol: .heart),
-            style: .plain,
-            target: nil,
-            action: nil
-        )
+        setupFavoritedButton()
+    }
+
+    @objc
+    private func deleteFavorite() {
+        viewModel.deleteFavorite()
+        setupNoFavoritedButton()
     }
 
     private func showBadgeHighlight() {
