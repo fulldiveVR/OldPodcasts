@@ -10,7 +10,7 @@ import SnapKit
 import UIKit
 
 protocol VolumeControlStackViewDelegate: AnyObject {
-    func volumeControlStackViewChangeVolume(_ value: Float)
+    func volumeControlStackView(didCurrentVolumeChange currentVolume: Float)
 }
 
 final class VolumeControlStackView: UIStackView {
@@ -70,7 +70,7 @@ private extension VolumeControlStackView {
 
     @objc
     func changeVolume(_ sender: UISlider) {
-        delegate?.volumeControlStackViewChangeVolume(sender.value)
+        delegate?.volumeControlStackView(didCurrentVolumeChange: sender.value)
     }
 
 }

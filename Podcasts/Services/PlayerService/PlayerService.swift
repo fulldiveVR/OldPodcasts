@@ -12,17 +12,21 @@ import MediaPlayer
 import ModernAVPlayer
 
 protocol PlayerServiceDelegate: AnyObject {
-    func playerServiceSetVolume(_ value: Float)
+    func playerService(didCurrentVolumeChange currentVolume: Float)
+    func playerService(didCurrentTimeChange currentTime: Double)
+    func playerService(didCurrentStateChange isPaused: Bool)
+    func playerService(didItemDurationChange itemDuration: Double?)
 }
 
 final class PlayerService {
 
     weak var delegate: PlayerServiceDelegate?
 
-    var observeValue: NSKeyValueObservation?
+    private var observeValue: NSKeyValueObservation?
 
     init() {
         startObservingVolumeChanges()
+        player.delegate = self
     }
 
     deinit {
@@ -37,7 +41,7 @@ final class PlayerService {
         player.currentTime
     }
 
-    var volumeValue: Float {
+    var currentVolume: Float {
         AVAudioSession.sharedInstance().outputVolume
     }
 
@@ -98,7 +102,7 @@ private extension PlayerService {
         let audioSession = AVAudioSession.sharedInstance()
         observeValue = audioSession.observe(\.outputVolume, options: [.initial, .new]) { _, value in
             if let newValue = value.newValue {
-                self.delegate?.playerServiceSetVolume(newValue)
+                self.delegate?.playerService(didCurrentVolumeChange: newValue)
             }
         }
     }
@@ -106,6 +110,24 @@ private extension PlayerService {
     func stopObservingVolumeChanges() {
         observeValue?.invalidate()
         observeValue = nil
+    }
+
+}
+
+// MARK: - ModernAVPlayerDelegate
+
+extension PlayerService: ModernAVPlayerDelegate {
+
+    func modernAVPlayer(_ player: ModernAVPlayer, didCurrentTimeChange currentTime: Double) {
+        delegate?.playerService(didCurrentTimeChange: currentTime)
+    }
+
+    func modernAVPlayer(_ player: ModernAVPlayer, didStateChange state: ModernAVPlayer.State) {
+        delegate?.playerService(didCurrentStateChange: state == .paused)
+    }
+
+    func modernAVPlayer(_ player: ModernAVPlayer, didItemDurationChange itemDuration: Double?) {
+        delegate?.playerService(didItemDurationChange: itemDuration)
     }
 
 }

@@ -9,7 +9,11 @@
 import Foundation
 
 protocol PlayerDetailsViewModelDelegate: AnyObject {
-    func playerDetailsViewModelSetVolume(_ value: Float)
+    func playerDetailsViewModel(didCurrentVolumeChange currentVolume: Float)
+    func playerDetailsViewModel(didCurrentTimeChange currentTime: Double)
+    func playerDetailsViewModel(didRemainigTimeChange remainigTime: Double)
+    func playerDetailsViewModel(didCurrentTimeLineChange currentFromEverything: Float)
+    func playerDetailsViewModel(didCurrentStatechange isPaused: Bool)
 }
 
 final class PlayerDetailsViewModel {
@@ -18,6 +22,7 @@ final class PlayerDetailsViewModel {
 
     let episode: Episode
     private let playerService: PlayerService
+    private var itemDuration: Double?
 
     init(episode: Episode, playerService: PlayerService) {
         self.episode = episode
@@ -33,8 +38,8 @@ final class PlayerDetailsViewModel {
         playerService.playerState == .paused
     }
 
-    var volumeValue: Float {
-        playerService.volumeValue
+    var currentVolume: Float {
+        playerService.currentVolume
     }
 
     func playPauseEpisode() {
@@ -66,14 +71,43 @@ final class PlayerDetailsViewModel {
         playerService.changeVolume(value)
     }
 
+    func changeTimeline(_ progress: Float) {
+        guard let itemDuration = self.itemDuration else { return }
+        let position = Double(progress) * itemDuration
+        playerService.seek(to: position)
+    }
+
 }
 
 // MARK: - PlayerServiceDelegate
 
 extension PlayerDetailsViewModel: PlayerServiceDelegate {
 
-    func playerServiceSetVolume(_ value: Float) {
-        delegate?.playerDetailsViewModelSetVolume(value)
+    func playerService(didCurrentVolumeChange currentVolume: Float) {
+        delegate?.playerDetailsViewModel(didCurrentVolumeChange: currentVolume)
+    }
+
+    func playerService(didCurrentTimeChange currentTime: Double) {
+        delegate?.playerDetailsViewModel(didCurrentTimeChange: currentTime)
+        if let itemDuration = self.itemDuration {
+            let remainingTime = itemDuration - currentTime
+            delegate?.playerDetailsViewModel(didRemainigTimeChange: remainingTime)
+
+            if playerService.playerState == .playing {
+                let currentFromEverything = Float(currentTime / itemDuration)
+                delegate?.playerDetailsViewModel(didCurrentTimeLineChange: currentFromEverything)
+            }
+        }
+    }
+
+    func playerService(didCurrentStateChange isPaused: Bool) {
+        DispatchQueue.main.async {
+            self.delegate?.playerDetailsViewModel(didCurrentStatechange: isPaused)
+        }
+    }
+
+    func playerService(didItemDurationChange itemDuration: Double?) {
+        self.itemDuration = itemDuration
     }
 
 }

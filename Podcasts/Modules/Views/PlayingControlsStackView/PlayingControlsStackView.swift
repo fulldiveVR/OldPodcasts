@@ -19,12 +19,6 @@ final class PlayingControlsStackView: UIStackView {
 
     weak var delegate: PlayingControlsStackViewDelegate?
 
-    var isPaused: Bool = false {
-        didSet {
-            playPauseButton.setImage(isPaused ? .play : .pause, for: .normal)
-        }
-    }
-
     // MARK: - Properties
     private lazy var rewindButton = UIButton(type: .system)
     private lazy var playPauseButton = UIButton(type: .system)
@@ -45,6 +39,16 @@ extension PlayingControlsStackView {
 
 }
 
+// MARK: - Public Actions
+
+extension PlayingControlsStackView {
+
+    func setState(_ isPaused: Bool) {
+        playPauseButton.setImage(isPaused ? .play : .pause, for: .normal)
+    }
+
+}
+
 // MARK: - Setup
 
 private extension PlayingControlsStackView {
@@ -60,7 +64,7 @@ private extension PlayingControlsStackView {
     func setupButtons() {
         rewindButton.setImage(.gobackward15, for: .normal)
         rewindButton.addTarget(self, action: #selector(rewindAction(_:)), for: .touchUpInside)
-        playPauseButton.setImage(isPaused ? .play : .pause, for: .normal)
+        playPauseButton.setImage(.pause, for: .normal)
         playPauseButton.addTarget(self, action: #selector(playPauseAction(_:)), for: .touchUpInside)
         fastForwardButton.setImage(.goforward15, for: .normal)
         fastForwardButton.addTarget(self, action: #selector(fastForwardAction(_:)), for: .touchUpInside)

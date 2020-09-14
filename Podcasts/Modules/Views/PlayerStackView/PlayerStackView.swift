@@ -12,18 +12,13 @@ protocol PlayerStackViewDelegate: AnyObject {
     func playerStackViewRewindAction()
     func playerStackViewPlayPauseAction()
     func playerStackViewFastForwardAction()
-    func playerStackViewChangeVolume(_ value: Float)
+    func playerStackView(didCurrentVolumeChange currentVolume: Float)
+    func playerStackView(willChangeTimeline progress: Float)
 }
 
 final class PlayerStackView: UIStackView {
 
     weak var delegate: PlayerStackViewDelegate?
-
-    var isPaused: Bool = false {
-        didSet {
-            playingControlsStackView.isPaused = isPaused
-        }
-    }
 
     // MARK: - Properties
     lazy var episodeImageView = UIImageView()
@@ -40,6 +35,7 @@ final class PlayerStackView: UIStackView {
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
+        setupTimeControlStackView()
         setupVolumeControlStackView()
         setupPlayingControlsStackView()
         setupEpisodeImageView()
@@ -63,11 +59,31 @@ final class PlayerStackView: UIStackView {
         volumeControlStackView.setVolume(value, animated: true)
     }
 
+    func setTimeline(currentTime: Double) {
+        timeControlStackView.setTimeLine(currentTime: currentTime)
+    }
+
+    func setTimeline(leftTime: Double) {
+        timeControlStackView.setTimeLine(leftTime: leftTime)
+    }
+
+    func setTimeLine(progress: Float) {
+        timeControlStackView.setTimeLine(progress: progress)
+    }
+
+    func setState(_ isPaused: Bool) {
+        playingControlsStackView.setState(isPaused)
+    }
+
 }
 
 // MARK: - Setup
 
 private extension PlayerStackView {
+
+    func setupTimeControlStackView() {
+        timeControlStackView.delegate = self
+    }
 
     func setupVolumeControlStackView() {
         volumeControlStackView.delegate = self
@@ -126,8 +142,18 @@ extension PlayerStackView: PlayingControlsStackViewDelegate {
 
 extension PlayerStackView: VolumeControlStackViewDelegate {
 
-    func volumeControlStackViewChangeVolume(_ value: Float) {
-        delegate?.playerStackViewChangeVolume(value)
+    func volumeControlStackView(didCurrentVolumeChange currentVolume: Float) {
+        delegate?.playerStackView(didCurrentVolumeChange: currentVolume)
+    }
+
+}
+
+// MARK: - TimeControlStackViewDelegate
+
+extension PlayerStackView: TimeControlStackViewDelegate {
+
+    func timeControlStackView(willChangeTimeline progress: Float) {
+        delegate?.playerStackView(willChangeTimeline: progress)
     }
 
 }

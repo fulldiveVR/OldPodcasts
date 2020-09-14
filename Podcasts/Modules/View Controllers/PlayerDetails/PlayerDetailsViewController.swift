@@ -54,9 +54,8 @@ private extension PlayerDetailsViewController {
 
     func setupViews() {
         playerView.delegate = self
-        playerView.isPaused = viewModel.isPaused
-        playerView.timeControlStackView.currentTimeLabel.text = viewModel.currentTime.toDisplayString()
-        playerView.setVolume(viewModel.volumeValue)
+        playerView.setTimeline(currentTime: viewModel.currentTime)
+        playerView.setVolume(viewModel.currentVolume)
 
         playerView.titleLabel.text = viewModel.episode.title
         playerView.authorLabel.text = viewModel.episode.author
@@ -85,15 +84,18 @@ extension PlayerDetailsViewController: PlayerStackViewDelegate {
 
     func playerStackViewPlayPauseAction() {
         viewModel.playPauseEpisode()
-        playerView.isPaused = viewModel.isPaused
     }
 
     func playerStackViewFastForwardAction() {
         viewModel.fastForwardEpisode()
     }
 
-    func playerStackViewChangeVolume(_ value: Float) {
-        viewModel.changeVolume(value)
+    func playerStackView(didCurrentVolumeChange currentVolume: Float) {
+        viewModel.changeVolume(currentVolume)
+    }
+
+    func playerStackView(willChangeTimeline progress: Float) {
+        viewModel.changeTimeline(progress)
     }
 
 }
@@ -102,8 +104,24 @@ extension PlayerDetailsViewController: PlayerStackViewDelegate {
 
 extension PlayerDetailsViewController: PlayerDetailsViewModelDelegate {
 
-    func playerDetailsViewModelSetVolume(_ value: Float) {
-        playerView.setVolume(value)
+    func playerDetailsViewModel(didCurrentVolumeChange currentVolume: Float) {
+        playerView.setVolume(currentVolume)
+    }
+
+    func playerDetailsViewModel(didCurrentTimeChange currentTime: Double) {
+        playerView.setTimeline(currentTime: currentTime)
+    }
+
+    func playerDetailsViewModel(didRemainigTimeChange remainingTime: Double) {
+        playerView.setTimeline(leftTime: remainingTime)
+    }
+
+    func playerDetailsViewModel(didCurrentTimeLineChange currentFromEverything: Float) {
+        playerView.setTimeLine(progress: currentFromEverything)
+    }
+
+    func playerDetailsViewModel(didCurrentStatechange isPaused: Bool) {
+        playerView.setState(isPaused)
     }
 
 }
